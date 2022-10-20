@@ -12,8 +12,8 @@ from sklearn.linear_model import LinearRegression
 
 import data as d
 
-SCOPE = "https://www.googleapis.com/auth/spreadsheets"
-SHEET_ID = "1b0ODG_mkvXdOwq8uEnQfyCi2PYZxGexyUbV6q5w-chc"
+# SCOPE = "https://www.googleapis.com/auth/spreadsheets"
+# SHEET_ID = "1b0ODG_mkvXdOwq8uEnQfyCi2PYZxGexyUbV6q5w-chc"
 SHEET_NAME = "db"
 X_COLS = [
     "身長",
@@ -32,38 +32,38 @@ TEST_START_INDEX = 400
 TEST_END_INDEX = 420
 
 
-@st.experimental_singleton()
-def connect_to_gsheet():
-    # Create a connection object
-    credentials = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"], scopes=[SCOPE]
-    )
+# @st.experimental_singleton()
+# def connect_to_gsheet():
+#     # Create a connection object
+#     credentials = service_account.Credentials.from_service_account_info(
+#         st.secrets["gcp_service_account"], scopes=[SCOPE]
+#     )
 
-    # Create a new Http() object for every request
-    def build_request(http, *args, **kwargs):
-        new_http = google_auth_httplib2.AuthorizedHttp(
-            credentials, http=httplib2.Http()
-        )
+#     # Create a new Http() object for every request
+#     def build_request(http, *args, **kwargs):
+#         new_http = google_auth_httplib2.AuthorizedHttp(
+#             credentials, http=httplib2.Http()
+#         )
 
-        return HttpRequest(new_http, *args, **kwargs)
+#         return HttpRequest(new_http, *args, **kwargs)
 
-    authorized_http = google_auth_httplib2.AuthorizedHttp(
-        credentials, http=httplib2.Http()
-    )
+#     authorized_http = google_auth_httplib2.AuthorizedHttp(
+#         credentials, http=httplib2.Http()
+#     )
 
-    service = build("sheets", "v4", requestBuilder=build_request, http=authorized_http)
-    gsheet_connector = service.spreadsheets()
+#     service = build("sheets", "v4", requestBuilder=build_request, http=authorized_http)
+#     gsheet_connector = service.spreadsheets()
 
-    return gsheet_connector
+#     return gsheet_connector
 
 
-def add_row_to_gsheet(gsheet_connector, row):
-    gsheet_connector.values().append(
-        spreadsheetId=SHEET_ID,
-        range=f"{SHEET_NAME}!A:E",
-        body=dict(values=row),
-        valueInputOption="USER_ENTERED",
-    ).execute()
+# def add_row_to_gsheet(gsheet_connector, row):
+#     gsheet_connector.values().append(
+#         spreadsheetId=SHEET_ID,
+#         range=f"{SHEET_NAME}!A:E",
+#         body=dict(values=row),
+#         valueInputOption="USER_ENTERED",
+#     ).execute()
 
 
 @st.cache
@@ -220,19 +220,19 @@ def lr():
             y_pred = model_lr.predict(X_test)
 
             # ログを記録
-            add_row_to_gsheet(
-                gsheet_connector,
-                [
-                    [
-                        datetime.datetime.now(
-                            datetime.timezone(datetime.timedelta(hours=9))
-                        ).strftime("%Y-%m-%d %H:%M:%S"),
-                        "単回帰分析",
-                        y_label,
-                        x_label,
-                    ]
-                ],
-            )
+            # add_row_to_gsheet(
+            #     gsheet_connector,
+            #     [
+            #         [
+            #             datetime.datetime.now(
+            #                 datetime.timezone(datetime.timedelta(hours=9))
+            #             ).strftime("%Y-%m-%d %H:%M:%S"),
+            #             "単回帰分析",
+            #             y_label,
+            #             x_label,
+            #         ]
+            #     ],
+            # )
 
             # グラフの描画
             fig = px.scatter(
@@ -298,19 +298,19 @@ def multi_lr():
             y_pred = model_lr.predict(X_test)
 
             # ログを記録
-            add_row_to_gsheet(
-                gsheet_connector,
-                [
-                    [
-                        datetime.datetime.now(
-                            datetime.timezone(datetime.timedelta(hours=9))
-                        ).strftime("%Y-%m-%d %H:%M:%S"),
-                        "重回帰分析",
-                        y_label,
-                        "_".join(x_labels),
-                    ]
-                ],
-            )
+            # add_row_to_gsheet(
+            #     gsheet_connector,
+            #     [
+            #         [
+            #             datetime.datetime.now(
+            #                 datetime.timezone(datetime.timedelta(hours=9))
+            #             ).strftime("%Y-%m-%d %H:%M:%S"),
+            #             "重回帰分析",
+            #             y_label,
+            #             "_".join(x_labels),
+            #         ]
+            #     ],
+            # )
 
             # グラフの描画
             plot_y = list(map(lambda y: y[0], y_pred))
@@ -321,5 +321,5 @@ def multi_lr():
 
 
 #### main contents
-gsheet_connector = connect_to_gsheet()
+# gsheet_connector = connect_to_gsheet()
 main()
