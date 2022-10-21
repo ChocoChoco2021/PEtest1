@@ -396,20 +396,21 @@ def multi_lr():
                 y_pred = model_lr.predict(X_test)
 
                 # ログを記録
-                # add_row_to_gsheet(
-                #     gsheet_connector,
-                #     [
-                #         [
-                #             datetime.datetime.now(
-                #                 datetime.timezone(datetime.timedelta(hours=9))
-                #             ).strftime("%Y-%m-%d %H:%M:%S"),
-                #              st.session_state.username,
-                #             "重回帰分析",
-                #             y_label,
-                #             "_".join(x_labels),
-                #         ]
-                #     ],
-                # )
+                add_row_to_gsheet(
+                    gsheet_connector,
+                    [
+                        [
+                            datetime.datetime.now(
+                                datetime.timezone(datetime.timedelta(hours=9))
+                            ).strftime("%Y-%m-%d %H:%M:%S"),
+                             st.session_state.username,
+                            "重回帰分析",
+                            y_label,
+                            "_".join(x_labels),
+                            "-",
+                        ]
+                    ],
+                )
 
                 # 結果の表示
                 coef = model_lr.coef_[0]
